@@ -37,7 +37,8 @@ class OAuthController extends Controller
         }
 
         // 注意修改 .env 的 APP_URL 配置与 GitHub 中的配置一样.
-        $callback = url()->route('oauth.oauth', ['from' => 'ukr']);
+        // $callback = url()->route('oauth.oauth', ['from' => 'ukr']);
+        $callback = url()->route('oauth.oauth');
         $goUrl = Config::get('oauth.ukr.url_authorize') . '?' . implode('&', [
             'client_id=' . Config::get('oauth.ukr.client_id'),
             'redirect_uri=' . urlencode($callback),
@@ -84,8 +85,8 @@ class OAuthController extends Controller
                 }
             }
         }
-
-        if ('ukr' == $from) {
+        else {
+        // if ('ukr' == $from) {
             $code = $request->input('code');
             if (!$code) {
                 abort(402, 'Invalid Code');
