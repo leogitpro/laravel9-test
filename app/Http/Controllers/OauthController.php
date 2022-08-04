@@ -95,6 +95,7 @@ class OAuthController extends Controller
                     'client_id' => Config::get('oauth.ukr.client_id'),
                     'client_secret' => Config::get('oauth.ukr.client_secret'),
                     'grant_type' => 'authorization_code',
+                    'redirect_uri' => urlencode(url()->route('oauth.oauth')),  // test bad api support
                     'code' => $code,
                 ])->throw();
                 if (!$response->successful()) {
