@@ -56,7 +56,8 @@ class OAuthController extends Controller
                             abort(404, 'User information fetch failed');
                         } else {
                             Log::debug('GitHub User:' . print_r($response->json(), true));
-                            return $this->outputJson($response->json());
+                            return response()->json($response->json())->setEncodingOptions(JSON_UNESCAPED_UNICODE);
+                            // return $this->outputJson($response->json());
                         }
                     } else {
                         abort(404, 'Invalid access token');
@@ -65,6 +66,6 @@ class OAuthController extends Controller
             }
         }
 
-        return $this->outputJson('');
+        return '';
     }
 }
