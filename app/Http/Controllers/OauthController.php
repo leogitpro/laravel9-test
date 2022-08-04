@@ -91,12 +91,12 @@ class OAuthController extends Controller
             if (!$code) {
                 abort(402, 'Invalid Code');
             } else {
-                $response = Http::accept('application/json')->post(Config::get('oauth.ukr.url_accesstoken'), [
+                $response = Http::withOptions(['debug' => true])->accept('application/json')->post(Config::get('oauth.ukr.url_accesstoken'), [
                     'client_id' => Config::get('oauth.ukr.client_id'),
                     'client_secret' => Config::get('oauth.ukr.client_secret'),
                     'grant_type' => 'authorization_code',
                     'code' => $code,
-                ])->withOptions(['debug' => true])->throw();
+                ])->throw();
                 if (!$response->successful()) {
                     abort(404, 'Token access failure');
                 } else {
@@ -105,7 +105,7 @@ class OAuthController extends Controller
                     $token = data_get($data,'access_token');
                     $tokenType = data_get($data,'token_type');
                     if ('bearer' == $tokenType && $token) {
-                        $response = Http::accept('application/json')->withToken($token)->get(Config::get('oauth.ukr.url_userprofile'))->withOptions(['debug' => true])->throw();
+                        $response = Http::withOptions(['debug' => true])->accept('application/json')->withToken($token)->get(Config::get('oauth.ukr.url_userprofile'))->throw();
                         if (!$response->successful()) {
                             abort(404, 'User information fetch failed');
                         } else {
