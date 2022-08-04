@@ -18,7 +18,7 @@ Route::get('/', function () {
 });
 
 Route::prefix('oauth')->name('oauth')->group(function(){
-    Route::get('github', [App\Http\Controllers\OAuthController::class, 'github'])->name('.github');
-    Route::get('ukr', [App\Http\Controllers\OAuthController::class, 'ukr'])->name('.ukr');
-    Route::get('oauth', [App\Http\Controllers\OAuthController::class, 'oauth'])->name('.oauth');
+    Route::get('github', [\App\Http\Controllers\OAuthController::class, 'github'])->name('.github');
+    Route::get('ukr', [\App\Http\Controllers\OAuthController::class, 'ukr'])->name('.ukr');
+    Route::get('oauth', [\App\Http\Controllers\OAuthController::class, 'oauth'])->name('.oauth');
 });

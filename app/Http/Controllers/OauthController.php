@@ -29,6 +29,25 @@ class OAuthController extends Controller
         return redirect($goUrl);
     }
 
+
+    public function ukr(Request $request)
+    {
+        if(!Config::get('oauth.ukr.client_id') || !Config::get('oauth.ukr.client_secret') || !Config::get('oauth.ukr.url_authorize') || !Config::get('oauth.ukr.url_accesstoken') || !Config::get('oauth.ukr.url_userprofile')) {
+            abort(429, 'Config ukr oauth first!');
+        }
+
+        // 注意修改 .env 的 APP_URL 配置与 GitHub 中的配置一样.
+        $callback = url()->route('oauth.oauth', ['from' => 'ukr']);
+        $goUrl = Config::get('oauth.ukr.url_authorize') . '?' . implode('&', [
+            'client_id=' . Config::get('oauth.ukr.client_id'),
+            'redirect_uri=' . urlencode($callback),
+            'state=' . Str::random(),
+        ]);
+        // return $goUrl;
+        Log::info(sprintf('Ukr oauth callback: %s', $goUrl));
+        return redirect($goUrl);
+    }
+
     public function oauth(Request $request)
     {
         Log::debug('OAuthed params:' . print_r($request->all(), true));
