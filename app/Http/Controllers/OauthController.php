@@ -61,7 +61,7 @@ class OAuthController extends Controller
                     'client_id' => Config::get('oauth.github.client_id'),
                     'client_secret' => Config::get('oauth.github.client_secret'),
                     'code' => $code,
-                ]);
+                ])->throw();
                 if (!$response->successful()) {
                     abort(404, 'Token access failure');
                 } else {
@@ -70,11 +70,45 @@ class OAuthController extends Controller
                     $token = data_get($data,'access_token');
                     $tokenType = data_get($data,'token_type');
                     if ('bearer' == $tokenType && $token) {
-                        $response = Http::accept('application/json')->withToken($token)->get(Config::get('oauth.github.url_userprofile'));
+                        $response = Http::accept('application/json')->withToken($token)->get(Config::get('oauth.github.url_userprofile'))->throw();
                         if (!$response->successful()) {
                             abort(404, 'User information fetch failed');
                         } else {
                             Log::debug('GitHub User:' . print_r($response->json(), true));
+                            return response()->json($response->json())->setEncodingOptions(JSON_UNESCAPED_UNICODE);
+                            // return $this->outputJson($response->json());
+                        }
+                    } else {
+                        abort(404, 'Invalid access token');
+                    }
+                }
+            }
+        }
+
+        if ('ukr' == $from) {
+            $code = $request->input('code');
+            if (!$code) {
+                abort(402, 'Invalid Code');
+            } else {
+                $response = Http::accept('application/json')->post(Config::get('oauth.ukr.url_accesstoken'), [
+                    'client_id' => Config::get('oauth.ukr.client_id'),
+                    'client_secret' => Config::get('oauth.ukr.client_secret'),
+                    'grant_type' => 'authorization_code',
+                    'code' => $code,
+                ])->throw();
+                if (!$response->successful()) {
+                    abort(404, 'Token access failure');
+                } else {
+                    $data = $response->json();
+                    Log::debug('Ukr Oauthed:' . print_r($data, true));
+                    $token = data_get($data,'access_token');
+                    $tokenType = data_get($data,'token_type');
+                    if ('bearer' == $tokenType && $token) {
+                        $response = Http::accept('application/json')->withToken($token)->get(Config::get('oauth.ukr.url_userprofile'))->throw();
+                        if (!$response->successful()) {
+                            abort(404, 'User information fetch failed');
+                        } else {
+                            Log::debug('Ukr User:' . print_r($response->json(), true));
                             return response()->json($response->json())->setEncodingOptions(JSON_UNESCAPED_UNICODE);
                             // return $this->outputJson($response->json());
                         }
